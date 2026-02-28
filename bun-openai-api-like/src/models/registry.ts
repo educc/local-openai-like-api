@@ -4,7 +4,7 @@
 
 export interface ModelEntry {
   id: string;
-  family: "openai" | "anthropic" | "google";
+  family: "openai" | "anthropic" | "google" | "xai";
   /** Which Copilot API endpoint to use */
   apiFormat: "chat" | "responses";
 }
@@ -16,29 +16,31 @@ export interface ModelEntry {
  */
 export const MODEL_REGISTRY: ModelEntry[] = [
   // OpenAI — Chat Completions
-  { id: "gpt-4o", family: "openai", apiFormat: "chat" },
-  { id: "gpt-4o-mini", family: "openai", apiFormat: "chat" },
   { id: "gpt-4.1", family: "openai", apiFormat: "chat" },
-  { id: "gpt-4.1-mini", family: "openai", apiFormat: "chat" },
-  { id: "gpt-4.1-nano", family: "openai", apiFormat: "chat" },
-  // OpenAI — Responses API
-  { id: "gpt-5", family: "openai", apiFormat: "responses" },
-  // OpenAI — Chat Completions (exception: gpt-5-mini uses chat)
+  { id: "gpt-4o", family: "openai", apiFormat: "chat" },
   { id: "gpt-5-mini", family: "openai", apiFormat: "chat" },
-  // OpenAI reasoning models
-  { id: "o1", family: "openai", apiFormat: "chat" },
-  { id: "o1-mini", family: "openai", apiFormat: "chat" },
-  { id: "o3", family: "openai", apiFormat: "chat" },
-  { id: "o3-mini", family: "openai", apiFormat: "chat" },
-  { id: "o4-mini", family: "openai", apiFormat: "chat" },
+  // OpenAI — Responses API
+  { id: "gpt-5.1", family: "openai", apiFormat: "responses" },
+  { id: "gpt-5.1-codex", family: "openai", apiFormat: "responses" },
+  { id: "gpt-5.1-codex-max", family: "openai", apiFormat: "responses" },
+  { id: "gpt-5.1-codex-mini", family: "openai", apiFormat: "responses" },
+  { id: "gpt-5.2", family: "openai", apiFormat: "responses" },
+  { id: "gpt-5.2-codex", family: "openai", apiFormat: "responses" },
+  { id: "gpt-5.3-codex", family: "openai", apiFormat: "responses" },
   // Anthropic
-  { id: "claude-3.5-sonnet", family: "anthropic", apiFormat: "chat" },
-  { id: "claude-3.7-sonnet", family: "anthropic", apiFormat: "chat" },
-  { id: "claude-4-sonnet", family: "anthropic", apiFormat: "chat" },
+  { id: "claude-haiku-4.5", family: "anthropic", apiFormat: "chat" },
+  { id: "claude-opus-4.5", family: "anthropic", apiFormat: "chat" },
+  { id: "claude-opus-4.6", family: "anthropic", apiFormat: "chat" },
   { id: "claude-sonnet-4", family: "anthropic", apiFormat: "chat" },
+  { id: "claude-sonnet-4.5", family: "anthropic", apiFormat: "chat" },
+  { id: "claude-sonnet-4.6", family: "anthropic", apiFormat: "chat" },
   // Google
-  { id: "gemini-2.0-flash", family: "google", apiFormat: "chat" },
   { id: "gemini-2.5-pro", family: "google", apiFormat: "chat" },
+  { id: "gemini-3-flash", family: "google", apiFormat: "chat" },
+  { id: "gemini-3-pro", family: "google", apiFormat: "chat" },
+  { id: "gemini-3.1-pro", family: "google", apiFormat: "chat" },
+  // xAI
+  { id: "grok-code-fast-1", family: "xai", apiFormat: "chat" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -62,6 +64,10 @@ export function isGemini(modelId: string): boolean {
   return modelId.startsWith("gemini");
 }
 
+export function isGrok(modelId: string): boolean {
+  return modelId.startsWith("grok");
+}
+
 /**
  * Should this model use the Copilot /responses endpoint instead of
  * /chat/completions?
@@ -83,10 +89,11 @@ export function shouldUseCopilotResponsesApi(modelId: string): boolean {
  */
 export function detectFamily(
   modelId: string,
-): "openai" | "anthropic" | "google" | null {
+): "openai" | "anthropic" | "google" | "xai" | null {
   if (isClaude(modelId)) return "anthropic";
   if (isOpenAI(modelId)) return "openai";
   if (isGemini(modelId)) return "google";
+  if (isGrok(modelId)) return "xai";
   return null;
 }
 
