@@ -1,0 +1,7 @@
+{
+  "baseUrl": "http://localhost:3009/v1",
+  "apiKey": "local-dev-key",
+  "model": "gpt-5-mini",
+  "os": "darwin",
+  "timeoutMs": 30000
+}
